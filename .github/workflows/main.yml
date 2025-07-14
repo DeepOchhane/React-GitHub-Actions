@@ -1,0 +1,15 @@
+name: React app test & deployment
+on: [workflow_dispatch, push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+     - name: Clone code app
+       uses: actions/checkout@v4
+     - name: setup node
+       uses: actions/setup-node@v4
+     - name: install npm dependecies
+       run: npm install
+     - name: test npm
+       run: npm test
+       
