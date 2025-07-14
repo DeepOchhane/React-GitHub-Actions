@@ -27,6 +27,6 @@ jobs:
      - name: install dependecies
        run: npm install
      - name: Build project
-       run: npm run Build
+       run: npm run build
      - name: run echo
        run: echo "Here we done"
