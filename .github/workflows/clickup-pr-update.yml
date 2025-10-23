@@ -29,3 +29,20 @@ jobs:
           -d "{
             \"comment_text\": \"🔗 Pull Request Created: [${{ github.event.pull_request.html_url }}](${{ github.event.pull_request.html_url }})\"
           }"
+  update-clickup-status:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == false
+    steps:
+      - name: Extract Task ID from PR Title
+        id: extract
+        run: |
+          echo "PR_TITLE=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
+          echo "TASK_ID=$(echo $PR_TITLE | grep -oE '[A-Z]+-[0-9]+')" >> $GITHUB_ENV
+
+      - name: Update ClickUp Task to PR Review
+        if: env.TASK_ID != ''
+        run: |
+          curl -X PUT "https://api.clickup.com/api/v2/task/${{ env.TASK_ID }}" \
+            -H "Authorization: ${{ secrets.CLICKUP_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"status": "PR Review"}'
