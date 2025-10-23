@@ -37,7 +37,7 @@ jobs:
         id: extract
         run: |
           echo "PR_TITLE=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
-          echo "TASK_ID=$(echo $PR_TITLE | grep -oE '[A-Z]+-[0-9]+')" >> $GITHUB_ENV
+          echo "TASK_ID=$(echo "$PR_TITLE" | grep -oE '[a-z0-9]{9,10}')" >> $GITHUB_ENV
 
       - name: Update ClickUp Task to PR Review
         if: env.TASK_ID != ''
