@@ -1,0 +1,31 @@
+name: Update ClickUp Task on PR
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  update_clickup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract ClickUp Task ID from PR title
+        id: extract
+        run: |
+          echo "PR_TITLE=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
+          task_id=$(echo "${{ github.event.pull_request.title }}" | grep -oE 'CU-[a-zA-Z0-9]+' | head -1 | cut -d'-' -f2)
+          if [ -n "$task_id" ]; then
+            echo "TASK_ID=$task_id" >> $GITHUB_ENV
+          else
+            echo "No ClickUp ID found in PR title."
+            exit 0
+          fi
+
+      - name: Update ClickUp Task (add PR link)
+        if: env.TASK_ID != ''
+        run: |
+          curl -X POST "https://api.clickup.com/api/v2/task/${TASK_ID}/comment" \
+          -H "Authorization: ${{ secrets.CLICKUP_API_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          -d "{
+            \"comment_text\": \"🔗 Pull Request Created: [${{ github.event.pull_request.html_url }}](${{ github.event.pull_request.html_url }})\"
+          }"
