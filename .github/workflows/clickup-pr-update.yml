@@ -33,11 +33,13 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == false
     steps:
-      - name: Extract Task ID from PR Title
-        id: extract
+      - name: Extract ClickUp Task ID from PR title
         run: |
-          echo "PR_TITLE=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
-          echo "TASK_ID=$(echo "$PR_TITLE" | grep -oE '[a-z0-9]{9,10}')" >> $GITHUB_ENV
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          echo "Pull Request Title: $PR_TITLE"
+          TASK_ID=$(echo "$PR_TITLE" | grep -oE '[a-z0-9]{9,10}')
+          echo "Extracted Task ID: $TASK_ID"
+          echo "TASK_ID=$TASK_ID" >> $GITHUB_ENV
 
       - name: Update ClickUp Task to PR Review
         if: env.TASK_ID != ''
