@@ -2,7 +2,7 @@
 
 We have introduced multiple Pull Request (PR) templates for this repository to improve code review quality and ensure that all required details are provided when raising a PR.
 
-📌 What Changed
+📌 What Changedf
 
 Added a .github/PULL_REQUEST_TEMPLATE/ folder in the repo.
 
